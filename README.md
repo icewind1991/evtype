@@ -8,7 +8,7 @@ EvType is made to replace the `xdotool type` command for wayland systems, where 
 
 ## Usage
 
-- Start the `evtype_daemon` as root using your favorite init daemon.
+- Start the `evtype_daemon` as root using your favorite init daemon (a systemd unit is [included](evtype.service)).
 - Run `evtype <text>` to enter some text trough the virtual keyboard.
 
 ## Why a separate daemon

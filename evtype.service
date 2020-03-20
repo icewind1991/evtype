@@ -1,0 +1,30 @@
+[Unit]
+Description=EvType
+
+[Service]
+# restrict permissions as much as possible
+ProtectControlGroups=true
+ProtectHome=true
+ProtectKernelTunables=true
+ProtectSystem=strict
+RestrictSUIDSGID=true
+PrivateNetwork=true
+CapabilityBoundingSet=true
+RestrictNamespaces=true
+RestrictAddressFamilies=AF_UNIX
+PrivateUsers=true
+PrivateTmp=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+NoNewPrivileges=true
+SystemCallFilter=@system-service
+SystemCallFilter=~@resources
+MemoryDenyWriteExecute=true
+IPAddressDeny=any
+ReadWritePaths=/var/run
+
+ExecStart=/usr/bin/evtype_daemon
+ExecStopPost=/usr/bin/rm /var/run/evtype.sock
+
+[Install]
+WantedBy=multi-user.target
