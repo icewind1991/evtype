@@ -18,6 +18,5 @@ serde = { version = "1.0", features = ["derive"] }
 keycode = "0.3.0"
 nix = "0.9.0"
 err-derive = "0.2.3"
-dirs = "2.0.2"
 main_error = "0.1.0"
 ctrlc = "3.1.4"

@@ -1,9 +1,11 @@
 use crate::common::Error;
 use crate::keyboard::{char_to_key, create_device};
-use dirs::runtime_dir;
 use evdev::{data, raw, uinput};
 use main_error::MainError;
+use std::fs;
+use std::fs::Permissions;
 use std::io::Read;
+use std::os::unix::fs::PermissionsExt;
 use std::os::unix::net::UnixListener;
 use std::thread::sleep;
 use std::time::Duration;
@@ -35,16 +37,17 @@ fn type_string(dev: &mut uinput::Device, text: &str) -> Result<(), Error> {
 fn main() -> Result<(), MainError> {
     let mut keyboard = create_device()?;
 
-    let mut path = runtime_dir().ok_or("Can't get runtime directory")?;
-    path.push("evtype.sock");
+    let path = "/var/run/evtype.sock";
 
-    let listener = UnixListener::bind(&path)?;
+    let listener = UnixListener::bind(path)?;
+    fs::set_permissions(path, Permissions::from_mode(0o666))?;
+
     let mut incoming = listener.incoming();
 
-    println!("listening on {}", path.as_os_str().to_str().unwrap());
+    println!("listening on {}", path);
 
     ctrlc::set_handler(move || {
-        let _ = std::fs::remove_file(&path);
+        let _ = fs::remove_file(path);
         std::process::exit(0);
     })?;
 
