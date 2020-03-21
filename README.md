@@ -15,4 +15,27 @@ EvType is made to replace the `xdotool type` command for wayland systems, where 
 
 For security reasons your user generally doesn't have permissions to talk directly to evdev so root permissions are required.
 By having a separate daemon do the talking to evdev the `evtype` tool doesn't need to be run as root and only a restricted api
-is exposed to non-root users (i.e. only typing printable characters, no keyboard logging). 
+is exposed to non-root users (i.e. only typing printable characters, no keyboard logging).
+
+## Limitations
+
+EvType currently always assumes query layout and might result in unexpected results when the system is configured
+with a different keyboard layout.
+
+## Programmatic usage
+
+You can use the `evtype_daemon` from your own programs by connecting to the unix socket at `/var/run/evtype.sock` and
+send the text to be typed over the socket.
+
+A basic rust example:
+
+```rust
+use std::io::Write;
+use std::os::unix::net::UnixStream;
+
+fn main -> Result<(), Box<dyn Error>> {
+    let mut stream = UnixStream::connect("/var/run/evtype.sock")?;
+    stream.write_all("hello world".as_bytes())?;
+    Ok(());
+}
+```  
