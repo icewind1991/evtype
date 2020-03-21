@@ -1,12 +1,12 @@
-use crate::common::Error;
 use evdev::raw::uinput_setup;
 use evdev::{
     data,
     uinput::{Builder, Device},
     uinput_ioctl,
 };
+use main_error::MainError;
 
-pub fn char_to_key(c: char) -> Result<(data::Key, bool), Error> {
+pub fn char_to_key(c: char) -> Result<(data::Key, bool), MainError> {
     match c {
         '0' => Ok((data::KEY_0, false)),
         '1' => Ok((data::KEY_1, false)),
@@ -104,11 +104,11 @@ pub fn char_to_key(c: char) -> Result<(data::Key, bool), Error> {
         '?' => Ok((data::KEY_SLASH, true)),
         ' ' => Ok((data::KEY_SPACE, false)),
         '\n' => Ok((data::KEY_ENTER, false)),
-        c => Err(Error::UnknownCharacter(c)),
+        _ => Err("Invalid character".to_string().into()),
     }
 }
 
-pub fn create_device() -> Result<Device, Error> {
+pub fn create_device() -> Result<Device, MainError> {
     let mut conf = uinput_setup::default();
     conf.set_name("EvType")?;
     conf.id.bustype = 0x16;

@@ -1,4 +1,3 @@
-use crate::common::Error;
 use crate::keyboard::{char_to_key, create_device};
 use evdev::{data, raw, uinput};
 use main_error::MainError;
@@ -10,12 +9,11 @@ use std::os::unix::net::UnixListener;
 use std::thread::sleep;
 use std::time::Duration;
 
-mod common;
 mod keyboard;
 
 const TYPE_DELAY: Duration = Duration::from_millis(10);
 
-fn type_string(dev: &mut uinput::Device, text: &str) -> Result<(), Error> {
+fn type_string(dev: &mut uinput::Device, text: &str) -> Result<(), MainError> {
     for c in text.chars() {
         let (key, shift) = char_to_key(c)?;
         dev.write(data::KEY, key as u16, 1)?;
