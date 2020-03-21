@@ -33,7 +33,7 @@ A basic rust example:
 use std::io::Write;
 use std::os::unix::net::UnixStream;
 
-fn main -> Result<(), Box<dyn Error>> {
+fn main() -> Result<(), Box<dyn Error>> {
     let mut stream = UnixStream::connect("/var/run/evtype.sock")?;
     stream.write_all("hello world".as_bytes())?;
     Ok(());
