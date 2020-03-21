@@ -55,8 +55,10 @@ fn main() -> Result<(), MainError> {
 
     while let Some(Ok(mut stream)) = incoming.next() {
         text_buffer.clear();
-        stream.read_to_string(&mut text_buffer)?;
-        type_string(&mut keyboard, &text_buffer)?;
+        match stream.read_to_string(&mut text_buffer) {
+            Ok(_) => type_string(&mut keyboard, &text_buffer)?,
+            Err(e) => eprintln!("{}", e),
+        }
     }
 
     Ok(())
