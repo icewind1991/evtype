@@ -1,5 +1,5 @@
 use crate::keyboard::{char_to_key, create_device};
-use evdev::{data, raw, uinput};
+use evdev::{EventType, InputEvent, Key, Synchronization};
 use main_error::MainError;
 use std::fs;
 use std::fs::Permissions;
@@ -8,25 +8,26 @@ use std::os::unix::fs::PermissionsExt;
 use std::os::unix::net::UnixListener;
 use std::thread::sleep;
 use std::time::Duration;
+use evdev::uinput::VirtualDevice;
 
 mod keyboard;
 
 const TYPE_DELAY: Duration = Duration::from_millis(10);
 
-fn type_string(dev: &mut uinput::Device, text: &str) -> Result<(), MainError> {
+fn type_string(dev: &mut VirtualDevice, text: &str) -> Result<(), MainError> {
     for c in text.chars() {
         let (key, shift) = char_to_key(c)?;
-        dev.write(data::KEY, key as u16, 1)?;
         if shift {
-            dev.write(data::KEY, data::KEY_LEFTSHIFT as u16, 1)?;
+            dev.emit(&[InputEvent::new(EventType::KEY, Key::KEY_LEFTSHIFT.0, 1)])?;
         }
-        dev.write(data::SYNCHRONIZATION, data::SYN_REPORT as u16, 0)?;
+        dev.emit(&[InputEvent::new(EventType::KEY, key.0, 1)])?;
+        dev.emit(&[InputEvent::new(EventType::SYNCHRONIZATION, Synchronization::SYN_REPORT.0, 1)])?;
         sleep(TYPE_DELAY);
-        dev.write(data::KEY, key as u16, 0)?;
+        dev.emit(&[InputEvent::new(EventType::KEY, key.0, 0)])?;
         if shift {
-            dev.write(data::KEY, data::KEY_LEFTSHIFT as u16, 0)?;
+            dev.emit(&[InputEvent::new(EventType::KEY, Key::KEY_LEFTSHIFT.0, 0)])?;
         }
-        dev.write(data::SYNCHRONIZATION, data::SYN_REPORT as u16, 0)?;
+        dev.emit(&[InputEvent::new(EventType::SYNCHRONIZATION, Synchronization::SYN_REPORT.0, 0)])?;
         sleep(TYPE_DELAY);
     }
     Ok(())

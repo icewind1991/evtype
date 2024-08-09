@@ -1,8 +1,9 @@
 [package]
 name = "evtype"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Robin Appelman <robin@icewind.nl>"]
 edition = "2018"
+rust-version = "1.69.0"
 
 [[bin]]
 name = "evtype_daemon"
@@ -13,7 +14,7 @@ name = "evtype"
 path = "src/client.rs"
 
 [dependencies]
-evdev = { git = "https://github.com/myfreeweb/evdev", branch = "uinput" }
-nix = "0.9.0"
-main_error = "0.1.0"
-ctrlc = "3.1.4"
+evdev = "0.12.2"
+nix = "0.29.0"
+main_error = "0.1.2"
+ctrlc = "3.4.4"
