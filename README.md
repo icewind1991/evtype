@@ -19,7 +19,7 @@ is exposed to non-root users (i.e. only typing printable characters, no keyboard
 
 ## Limitations
 
-EvType currently always assumes query layout and might result in unexpected results when the system is configured
+EvType currently always assumes qwerty layout and might result in unexpected results when the system is configured
 with a different keyboard layout.
 
 ## Programmatic usage
