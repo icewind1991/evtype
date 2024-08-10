@@ -74,7 +74,7 @@
           lib.attrsets.genAttrs targets (target:
             (cross-naersk'.buildPackage target) nearskOpt)
           // {
-            inherit (pkgs) logging-extractor extracted-logs extracted-logs-rust logsmash extracted-logs-rust-mod;
+            inherit (pkgs) evtype;
             check = msrvNaersk.buildPackage (nearskOpt
               // {
                 mode = "check";
@@ -83,7 +83,7 @@
               // {
                 mode = "clippy";
               });
-            default = pkgs.logsmash;
+            default = pkgs.evtype;
           };
         apps.default = packages.default;
 
