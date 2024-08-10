@@ -97,5 +97,17 @@
     )
     // {
       overlays.default = import ./nix/overlay.nix;
+      nixosModules.default = {
+        pkgs,
+        config,
+        lib,
+        ...
+      }: {
+        imports = [./nix/module.nix];
+        config = lib.mkIf config.services.evtype.enable {
+          nixpkgs.overlays = [self.overlays.default];
+          services.evtype.package = lib.mkDefault pkgs.evtype;
+        };
+      };
     };
 }

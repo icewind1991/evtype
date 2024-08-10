@@ -4,10 +4,11 @@
   lib,
 }: let
   inherit (lib.sources) sourceByRegex;
+  inherit (builtins) fromTOML readFile;
 in
   rustPlatform.buildRustPackage rec {
     pname = "evtype";
-    version = "0.1.0";
+    version = (fromTOML (readFile ../Cargo.toml)).package.version;
 
     src = sourceByRegex ../. ["Cargo.*" "(src)(/.*)?"];
 

@@ -6,6 +6,7 @@ use std::fs::{create_dir_all, Permissions};
 use std::io::Read;
 use std::os::unix::fs::PermissionsExt;
 use std::os::unix::net::UnixListener;
+use std::path::Path;
 use std::thread::sleep;
 use std::time::Duration;
 use evdev::uinput::VirtualDevice;
@@ -37,8 +38,11 @@ fn main() -> Result<(), MainError> {
     let mut keyboard = create_device()?;
 
     let path = "/var/run/evtype/evtype.sock";
+    let dir = Path::new("/var/run/evtype");
 
-    create_dir_all("/var/run/evtype")?;
+    if !dir.exists() {
+        create_dir_all(dir)?;
+    }
     let listener = UnixListener::bind(path)?;
     fs::set_permissions(path, Permissions::from_mode(0o666))?;
 
