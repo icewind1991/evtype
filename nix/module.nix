@@ -25,8 +25,9 @@ in {
 
       serviceConfig = {
         Restart = "on-failure";
+        RestartSec = 2;
         ExecStart = "${cfg.package}/bin/evtype_daemon";
-        DynamicUser = true;
+        User = "root";
         PrivateTmp = true;
         ProtectSystem = "strict";
         ProtectHome = true;

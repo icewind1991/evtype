@@ -7,6 +7,7 @@ use std::io::Read;
 use std::os::unix::fs::PermissionsExt;
 use std::os::unix::net::UnixListener;
 use std::path::Path;
+use std::process::ExitCode;
 use std::thread::sleep;
 use std::time::Duration;
 use evdev::uinput::VirtualDevice;
@@ -34,17 +35,35 @@ fn type_string(dev: &mut VirtualDevice, text: &str) -> Result<(), MainError> {
     Ok(())
 }
 
-fn main() -> Result<(), MainError> {
-    let mut keyboard = create_device()?;
+fn main() -> ExitCode {
+    let mut keyboard = match create_device() {
+        Ok(keyboard) => keyboard,
+        Err(e) => {
+            eprintln!("Failed to create virtual keyboard: {e:?}");
+            return ExitCode::FAILURE;
+        }
+    };
 
     let path = "/var/run/evtype/evtype.sock";
     let dir = Path::new("/var/run/evtype");
 
     if !dir.exists() {
-        create_dir_all(dir)?;
+        if let Err(e) = create_dir_all(dir) {
+            eprintln!("Failed to create socket directory {}: {e:#}", dir.display());
+            return ExitCode::FAILURE;
+        }
     }
-    let listener = UnixListener::bind(path)?;
-    fs::set_permissions(path, Permissions::from_mode(0o666))?;
+    let listener = match UnixListener::bind(path) {
+        Ok(listener) => listener,
+        Err(e) => {
+            eprintln!("Failed to socket {path}: {e:#}");
+            return ExitCode::FAILURE;
+        }
+    };
+    if let Err(e) = fs::set_permissions(path, Permissions::from_mode(0o666)) {
+        eprintln!("Failed to set socket permissions for {path}: {e:#}");
+        return ExitCode::FAILURE;
+    }
 
     let mut incoming = listener.incoming();
 
@@ -53,17 +72,21 @@ fn main() -> Result<(), MainError> {
     ctrlc::set_handler(move || {
         let _ = fs::remove_file(path);
         std::process::exit(0);
-    })?;
+    }).ok();
 
     let mut text_buffer = String::new();
 
     while let Some(Ok(mut stream)) = incoming.next() {
         text_buffer.clear();
         match stream.read_to_string(&mut text_buffer) {
-            Ok(_) => type_string(&mut keyboard, &text_buffer)?,
-            Err(e) => eprintln!("{}", e),
+            Ok(_) => {
+                if let Err(e) = type_string(&mut keyboard, &text_buffer) {
+                    eprintln!("Failed to type string: {e:?}");
+                }
+            },
+            Err(e) => eprintln!("Failed to read from socket: {:#}", e),
         }
     }
 
-    Ok(())
+    ExitCode::SUCCESS
 }
