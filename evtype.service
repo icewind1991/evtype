@@ -22,9 +22,9 @@ SystemCallFilter=~@resources
 MemoryDenyWriteExecute=true
 IPAddressDeny=any
 ReadWritePaths=/var/run
+RuntimeDirectory=evtype
 
 ExecStart=/usr/bin/evtype_daemon
-ExecStopPost=/usr/bin/rm /var/run/evtype.sock
 
 [Install]
 WantedBy=multi-user.target

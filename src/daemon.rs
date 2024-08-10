@@ -2,7 +2,7 @@ use crate::keyboard::{char_to_key, create_device};
 use evdev::{EventType, InputEvent, Key, Synchronization};
 use main_error::MainError;
 use std::fs;
-use std::fs::Permissions;
+use std::fs::{create_dir_all, Permissions};
 use std::io::Read;
 use std::os::unix::fs::PermissionsExt;
 use std::os::unix::net::UnixListener;
@@ -36,8 +36,9 @@ fn type_string(dev: &mut VirtualDevice, text: &str) -> Result<(), MainError> {
 fn main() -> Result<(), MainError> {
     let mut keyboard = create_device()?;
 
-    let path = "/var/run/evtype.sock";
+    let path = "/var/run/evtype/evtype.sock";
 
+    create_dir_all("/var/run/evtype")?;
     let listener = UnixListener::bind(path)?;
     fs::set_permissions(path, Permissions::from_mode(0o666))?;
 

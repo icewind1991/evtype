@@ -24,7 +24,7 @@ with a different keyboard layout.
 
 ## Programmatic usage
 
-You can use the `evtype_daemon` from your own programs by connecting to the unix socket at `/var/run/evtype.sock` and
+You can use the `evtype_daemon` from your own programs by connecting to the unix socket at `/var/run/evtype/evtype.sock` and
 send the text to be typed over the socket.
 
 A basic rust example:
@@ -34,7 +34,7 @@ use std::io::Write;
 use std::os::unix::net::UnixStream;
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let mut stream = UnixStream::connect("/var/run/evtype.sock")?;
+    let mut stream = UnixStream::connect("/var/run/evtype/evtype.sock")?;
     stream.write_all("hello world".as_bytes())?;
     Ok(());
 }

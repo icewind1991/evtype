@@ -3,7 +3,7 @@ use std::io::Write;
 use std::os::unix::net::UnixStream;
 
 fn main() -> Result<(), MainError> {
-    let path = "/var/run/evtype.sock";
+    let path = "/var/run/evtype/evtype.sock";
 
     let text = std::env::args().skip(1).next().unwrap_or_default();
 
