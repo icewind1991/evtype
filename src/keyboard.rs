@@ -205,6 +205,6 @@ pub fn create_device() -> Result<VirtualDevice, MainError> {
     ].iter().collect::<AttributeSet<_>>();
 
     Ok(VirtualDeviceBuilder::new()?.name("EvType virtual keyboard")
-        .with_keys(&keys)?
+        .with_keys(keys)?
         .build()?)
 }
