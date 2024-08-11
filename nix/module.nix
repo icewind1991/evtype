@@ -38,6 +38,12 @@ in {
         ProtectControlGroups = true;
         SystemCallArchitectures = "native";
         ProtectKernelModules = true;
+        RestrictSUIDSGID = true;
+        ProtectProc = "invisible";
+        ProcSubset = "pid";
+        PrivateUsers = true;
+        DevicePolicy = "strict";
+        DeviceAllow = ["/dev/uinput" "/dev/stdout"];
         RestrictNamespaces = true;
         MemoryDenyWriteExecute = true;
         ProtectHostname = true;
@@ -46,8 +52,10 @@ in {
         RestrictAddressFamilies = ["AF_UNIX"];
         RestrictRealtime = true;
         SystemCallFilter = ["@system-service" "~@resources" "~@privileged"];
+        PrivateNetwork = true;
         IPAddressDeny = "any";
         RuntimeDirectory = "evtype";
+        UMask = "0077";
       };
     };
   };

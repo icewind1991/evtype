@@ -3,26 +3,38 @@ Description=EvType
 
 [Service]
 # restrict permissions as much as possible
+CapabilityBoundingSet=true
+DeviceAllow=/dev/uinput
+DeviceAllow=/dev/stdout
+DevicePolicy=strict
+IPAddressDeny=any
+LockPersonality=true
+MemoryDenyWriteExecute=true
+NoNewPrivileges=true
+PrivateNetwork=true
+PrivateTmp=true
+PrivateUsers=true
+ProcSubset=pid
+ProtectClock=true
 ProtectControlGroups=true
 ProtectHome=true
-ProtectKernelTunables=true
-ProtectSystem=strict
-RestrictSUIDSGID=true
-PrivateNetwork=true
-CapabilityBoundingSet=true
-RestrictNamespaces=true
-RestrictAddressFamilies=AF_UNIX
-PrivateUsers=true
-PrivateTmp=true
-ProtectKernelModules=true
+ProtectHostname=true
 ProtectKernelLogs=true
-NoNewPrivileges=true
+ProtectKernelModules=true
+ProtectKernelTunables=true
+ProtectProc=invisible
+ProtectSystem=strict
+RestrictAddressFamilies=AF_UNIX
+RestrictNamespaces=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+RuntimeDirectory=evtype
+SystemCallArchitectures=native
 SystemCallFilter=@system-service
 SystemCallFilter=~@resources
-MemoryDenyWriteExecute=true
-IPAddressDeny=any
-ReadWritePaths=/var/run
-RuntimeDirectory=evtype
+SystemCallFilter=~@privileged
+UMask=0077
+User=root
 
 ExecStart=/usr/bin/evtype_daemon
 
