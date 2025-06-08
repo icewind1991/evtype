@@ -1,3 +1,5 @@
+# Moved to https://codeberg.org/icewind/evtype
+
 # EvType
 
 Virtual typing using evdev.
